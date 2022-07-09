@@ -3,8 +3,8 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require('jsonwebtoken');
 
-function generateAccessToken(email) {
-  return jwt.sign(email, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
+function generateAccessToken(id) {
+  return jwt.sign(id, process.env.TOKEN_SECRET, { expiresIn: '3600s' });
 }
 
 exports.postSignUp = async (req, res, next) => {
@@ -60,7 +60,7 @@ exports.postLogin = async (req, res, next) => {
     });
 
     if (!emailExists) {
-      res.status(401).json({
+      res.json({
         message: "no Email found!!",
         response: false,
         type: 0,
@@ -68,19 +68,19 @@ exports.postLogin = async (req, res, next) => {
     } else {
       await bcrypt.compare(password, emailExists.password, (err, result) => {
         if(!result) {
-          res.status(401).json({
+          res.json({
             message: "User Password Incorrect!",
             response: result,
             type: 0,
           });
         } else if(err){
-          res.status(500).json({
+          res.json({
             message: "Internal Server error!",
             response: err,
             type: 0,
           });
         }else{
-          const token = generateAccessToken({ email: email });
+          const token = generateAccessToken({ id: emailExists.id });
           res.json({
             message: "User Logined successfully",
             response: result,
