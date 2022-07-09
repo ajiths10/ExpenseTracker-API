@@ -4,10 +4,17 @@ const cors = require("cors");
 
 const app = express();
 const port = 7777;
+let token ;
 
 const sequelize = require("./util/database");
 //models
 const user = require('./models/user');
+
+//To generate a token for jwt
+// require('crypto').randomBytes(48, function(err, buffer) {
+//    token = buffer.toString('hex');
+//    console.log(token)
+// });
 
 //routes
 const auth = require('./routes/auth');
