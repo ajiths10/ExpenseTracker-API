@@ -8,8 +8,8 @@ let token ;
 
 const sequelize = require("./util/database");
 //models
-const user = require('./models/user');
-
+const User = require('./models/user');
+const Expenses = require('./models/expenses');
 //To generate a token for jwt
 // require('crypto').randomBytes(48, function(err, buffer) {
 //    token = buffer.toString('hex');
@@ -25,6 +25,9 @@ app.use(cors());
 
 console.log("Hello World");
 app.use('/auth', auth)
+
+Expenses.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
+User.hasMany(Expenses);
 
 sequelize
   .sync()

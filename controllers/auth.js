@@ -46,7 +46,7 @@ exports.postSignUp = async (req, res, next) => {
     }
   } catch (err) {
     console.log(err);
-    res.json({ message: "Please input correctly!", type: 0, response: err });
+    res.json({ message: "Internal Server Error", type: 0, response: err });
   }
 };
 
@@ -94,6 +94,6 @@ exports.postLogin = async (req, res, next) => {
     }
   } catch (err) {
     console.log(err);
-    res.json({ message: "Please input correctly!", type: 0, response: err });
+    res.json({ message: "Internal Server Error", type: 0, response: err });
   }
 };
