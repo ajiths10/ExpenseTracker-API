@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const Expenses = require('../models/expenses');
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
@@ -34,3 +35,14 @@ try{
 }
 
 };
+
+
+exports.fetchUserExpenses = async(req, res, next) => {
+    const userExpenses = await Expenses.findAll({where : { userId:  req.user.id }});
+    // console.log(userExpenses);
+    res.json({
+        message: "Expense fetched",
+        response: userExpenses,
+        type: 1,
+      });
+}

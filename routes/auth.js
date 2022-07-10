@@ -37,6 +37,7 @@ router.post('/user/signup',auth.postSignUp);
 router.post('/user/login',auth.postLogin);
 router.get('/user/api/verify',authenticate,auth.userVerify);
 
+router.get('/api/userexpenses',authenticate,expenses.fetchUserExpenses);
 router.post('/api/addexpense',authenticate,expenses.postExpenses);
 router.post('/api/payment',authenticate,payment.PostPayment);
 router.post('/api/payment/sucess',authenticate,payment.PostPaymentSuccess);
