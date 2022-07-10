@@ -102,3 +102,12 @@ exports.postLogin = async (req, res, next) => {
     res.json({ message: "Internal Server Error", type: 0, response: err });
   }
 };
+
+exports.userVerify = async(req,res, next) => {
+  console.log(req.user);
+  res.json({
+    message: "User Authenticated",
+    response: req.user,
+    type: 1,
+  });
+}
