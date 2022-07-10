@@ -7,9 +7,11 @@ const port = 7777;
 let token ;
 
 const sequelize = require("./util/database");
+
 //models
 const User = require('./models/user');
 const Expenses = require('./models/expenses');
+
 //To generate a token for jwt
 // require('crypto').randomBytes(48, function(err, buffer) {
 //    token = buffer.toString('hex');

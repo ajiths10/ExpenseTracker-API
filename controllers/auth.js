@@ -85,6 +85,11 @@ exports.postLogin = async (req, res, next) => {
             message: "User Logined successfully",
             response: result,
             jwttoken: token,
+            userData: {
+              username: emailExists.name,
+              email: emailExists.email,
+              isPreminum: emailExists.isPreminum
+            },
             type: 1,
           });
         }

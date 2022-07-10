@@ -2,6 +2,7 @@ const express = require('express');
 
 const auth = require('../controllers/auth');
 const expenses = require('../controllers/expense');
+const payment = require('../controllers/payment');
 
 const router = express.Router();
 
@@ -35,6 +36,8 @@ const authenticate = async(req, res, next) => {
 router.post('/user/signup',auth.postSignUp);
 router.post('/user/login',auth.postLogin);
 
-router.post('/api/addexpense',authenticate,expenses.postExpenses)
+router.post('/api/addexpense',authenticate,expenses.postExpenses);
+router.post('/api/payment',authenticate,payment.PostPayment);
+router.post('/api/payment/sucess',authenticate,payment.PostPaymentSuccess);
 
 module.exports = router;
