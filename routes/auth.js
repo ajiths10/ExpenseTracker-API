@@ -3,6 +3,7 @@ const express = require('express');
 const auth = require('../controllers/auth');
 const expenses = require('../controllers/expense');
 const payment = require('../controllers/payment');
+const preminum = require('../controllers/premium');
 
 const router = express.Router();
 
@@ -39,6 +40,10 @@ router.get('/user/api/verify',authenticate,auth.userVerify);
 
 router.get('/api/userexpenses',authenticate,expenses.fetchUserExpenses);
 router.post('/api/addexpense',authenticate,expenses.postExpenses);
+router.post('/api/alluser/expenses',authenticate,expenses.fetchSpecificUserExpenses);
+
+router.get('/api/getallusers',preminum.getAllUsers);
+
 router.post('/api/payment',authenticate,payment.PostPayment);
 router.post('/api/payment/sucess',authenticate,payment.PostPaymentSuccess);
 
