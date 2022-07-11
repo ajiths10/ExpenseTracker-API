@@ -36,6 +36,7 @@ const authenticate = async(req, res, next) => {
 
 router.post('/user/signup',auth.postSignUp);
 router.post('/user/login',auth.postLogin);
+router.post('/user/forgotpassword',auth.forgotPassword);
 router.get('/user/api/verify',authenticate,auth.userVerify);
 
 router.get('/api/userexpenses',authenticate,expenses.fetchUserExpenses);
