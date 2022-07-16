@@ -1,9 +1,10 @@
 const User = require("../models/user");
+const ForgotModel = require("../models/ForgotPassword");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
-const {v4 : uuidv4} = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 
 function generateAccessToken(id) {
   return jwt.sign(id, process.env.TOKEN_SECRET, { expiresIn: "3600s" });
@@ -137,12 +138,13 @@ exports.forgotPassword = async (req, res, next) => {
         type: 0,
       });
     } else {
-
-     const generateResponse = emailExists.createForgotPassword({
+      const newUuId = await uuidv4();
+      const generateResponse = emailExists.createForgotPassword({
         isActive: 1,
         userUuId: emailExists.uuid,
-      })
-console.log(generateResponse);
+        ForgotPasswordID: newUuId,
+      });
+      console.log(generateResponse);
       // Generate test SMTP service account from ethereal.email
       // Only needed if you don't have a real mail account for testing
       let testAccount = await nodemailer.createTestAccount();
@@ -160,11 +162,11 @@ console.log(generateResponse);
 
       // send mail with defined transport object
       let info = await transporter.sendMail({
-        from: '"Fred Foo 👻" <foo@example.com>', // sender address
+        from: '"admin 👻" <admin@email.com>', // sender address
         to: emailExists.email, // list of receivers
         subject: "Forgot Password reset Link", // Subject line
         text: `Forgot Password reset Link`, // plain text body
-        html: `<b>http://localhost:7777/auth/api/user/forgotpassword/${emailExists.uuid}</b>`, // html body
+        html: `<a href="http://localhost:7777/auth/user/forgotpassword/${emailExists.uuid}"> Reset password</a>`, // html body
       });
 
       console.log("Message sent: %s", info.messageId);
@@ -187,3 +189,69 @@ console.log(generateResponse);
     res.json({ message: "Internal Server Error", type: 0, response: err });
   }
 };
+
+exports.forgotPasswordReset = async (req, res) => {
+  console.log(req.params.id);
+  const userExists = await ForgotModel.findOne({
+    where: { userUuId: req.params.id ? req.params.id : "" },
+  });
+  if (!userExists) {
+    res.send(`<html><h1>Invalid user or link !!</h1><html>`);
+  } else {
+    res.status(200).send(`<html>
+                            <script>
+                                function formsubmitted(e){
+                                   e.preventDefault();
+                                       console.log('called')
+                                        }
+                                    </script>
+                                    <form action="/auth/user/forgotpassword/update/${req.params.id}" method="post">
+                                        <label for="newpassword">Enter New password</label>
+                                        <input name="newpassword" type="password" required></input>
+                                        <button>reset password</button>
+                                    </form>
+                          </html>`);
+  }
+};
+
+exports.forgotPasswordUpdate = async (req, res) => {
+  const password = req.body.newpassword;
+
+  const userExists = await ForgotModel.findOne({
+    where: { userUuId: req.params.id ? req.params.id : "" },
+  });
+  if (!userExists) {
+    res.send(`<html>
+                <h1>Invalid user or link !!</h1>
+              <html>`
+            );
+  } else {
+    const newUuId = await uuidv4();
+    const response = await bcrypt.hash(
+      password,
+      saltRounds,
+      function (err, hash) {
+        console.log(hash);
+        storedHash = hash;
+
+        User.findByPk(userExists.userId)
+        .then(fetchedUser => {
+          fetchedUser.password = storedHash,
+          fetchedUser.uuid = newUuId
+          return fetchedUser.save();
+        })
+        .then(()=>{
+          userExists.isActive = 0
+          return userExists.save();
+        })
+        .catch(err => console.log(err));
+      }
+    );
+
+    res.send(`<html>
+    <h1>Success !!</h1>
+  <html>`
+);
+  }
+}
+
