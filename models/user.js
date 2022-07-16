@@ -26,6 +26,7 @@ const User = sequelize.define("user", {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
   },
+  uuid: Sequelize.STRING
 });
 
 module.exports = User;

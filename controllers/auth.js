@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const {v4 : uuidv4} = require('uuid');
 
 function generateAccessToken(id) {
   return jwt.sign(id, process.env.TOKEN_SECRET, { expiresIn: "3600s" });
@@ -25,6 +26,7 @@ exports.postSignUp = async (req, res, next) => {
       res.json({ message: "Email already registered", type: 0 });
     } else {
       //encrypt your password
+      const newUuId = await uuidv4();
       const response = await bcrypt.hash(
         password,
         saltRounds,
@@ -35,6 +37,7 @@ exports.postSignUp = async (req, res, next) => {
             name: name,
             email: email,
             password: storedHash,
+            uuid: newUuId,
           });
         }
       );
@@ -134,6 +137,12 @@ exports.forgotPassword = async (req, res, next) => {
         type: 0,
       });
     } else {
+
+     const generateResponse = emailExists.createForgotPassword({
+        isActive: 1,
+        userUuId: emailExists.uuid,
+      })
+console.log(generateResponse);
       // Generate test SMTP service account from ethereal.email
       // Only needed if you don't have a real mail account for testing
       let testAccount = await nodemailer.createTestAccount();
@@ -153,9 +162,9 @@ exports.forgotPassword = async (req, res, next) => {
       let info = await transporter.sendMail({
         from: '"Fred Foo 👻" <foo@example.com>', // sender address
         to: emailExists.email, // list of receivers
-        subject: "Hello ✔", // Subject line
-        text: "Hello world?", // plain text body
-        html: "<b>Hello world?</b>", // html body
+        subject: "Forgot Password reset Link", // Subject line
+        text: `Forgot Password reset Link`, // plain text body
+        html: `<b>http://localhost:7777/auth/api/user/forgotpassword/${emailExists.uuid}</b>`, // html body
       });
 
       console.log("Message sent: %s", info.messageId);
@@ -169,6 +178,7 @@ exports.forgotPassword = async (req, res, next) => {
       res.json({
         message: "Reset mail sent success",
         url: triggeredURl,
+        genrateresponse: generateResponse,
         type: 1,
       });
     }

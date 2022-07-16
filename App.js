@@ -11,7 +11,7 @@ const sequelize = require("./util/database");
 //models
 const User = require('./models/user');
 const Expenses = require('./models/expenses');
-
+const ForgotPassword = require('./models/ForgotPassword');
 //To generate a token for jwt
 // require('crypto').randomBytes(48, function(err, buffer) {
 //    token = buffer.toString('hex');
@@ -30,6 +30,11 @@ app.use('/auth', auth)
 
 Expenses.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 User.hasMany(Expenses);
+
+ForgotPassword.belongsTo(ForgotPassword, { constraints: true, onDelete: "CASCADE" });
+User.hasMany(ForgotPassword);
+
+
 
 sequelize
   .sync()
