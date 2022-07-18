@@ -1,53 +1,71 @@
-const express = require('express');
+const express = require("express");
 
-const auth = require('../controllers/auth');
-const expenses = require('../controllers/expense');
-const payment = require('../controllers/payment');
-const preminum = require('../controllers/premium');
+const auth = require("../controllers/auth");
+const expenses = require("../controllers/expense");
+const payment = require("../controllers/payment");
+const preminum = require("../controllers/premium");
 
 const router = express.Router();
 
 const User = require("../models/user");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
-const authenticate = async(req, res, next) => {
-    const token = req.header('authorization');
-    try{
+const authenticate = async (req, res, next) => {
+  const token = req.header("authorization");
+  try {
+    await Number(
+      jwt.verify(token, process.env.TOKEN_SECRET, async (err, user) => {
+        console.log("Auth error -", err);
 
-        await Number(jwt.verify(token, process.env.TOKEN_SECRET , async(err, user) => {
-            console.log('Auth error -',err)
-        
-            if (err) {
-               return res.json({
-                    message: "Login expires, Please login",
-                    response: err,
-                    type: 0,
-                  });
-            }
+        if (err) {
+          return res.json({
+            message: "Login expires, Please login",
+            response: err,
+            type: 0,
+          });
+        }
 
-            const fetchedUser =  await User.findByPk(user.id)
-              req.user = fetchedUser;
+        const fetchedUser = await User.findByPk(user.id);
+        req.user = fetchedUser;
 
-            next()
-          }));
-       
-    }catch (err){console.log(err)}
-}
+        next();
+      })
+    );
+  } catch (err) {
+    console.log(err);
+  }
+};
 
-router.post('/user/signup',auth.postSignUp);
-router.post('/user/login',auth.postLogin);
-router.post('/user/forgotpassword',auth.forgotPassword);
-router.get('/user/api/verify',authenticate,auth.userVerify);
-router.get('/user/forgotpassword/:id',auth.forgotPasswordReset )
-router.post('/user/forgotpassword/update/:id',auth.forgotPasswordUpdate )
+const isPreminum = (req, res, next) => {
+  console.log(req.user.isPreminum);
+  if (!req.user.isPreminum) {
+    return res.json({
+      message: "Unauthorized Access!!",
+      type: 0,
+    });
+  } else {
+    next();
+  }
+};
 
-router.get('/api/userexpenses',authenticate,expenses.fetchUserExpenses);
-router.post('/api/addexpense',authenticate,expenses.postExpenses);
-router.post('/api/alluser/expenses',authenticate,expenses.fetchSpecificUserExpenses);
+router.post("/user/signup", auth.postSignUp);
+router.post("/user/login", auth.postLogin);
+router.post("/user/forgotpassword", auth.forgotPassword);
+router.get("/user/api/verify", authenticate, auth.userVerify);
+router.get("/user/forgotpassword/:id", auth.forgotPasswordReset);
+router.post("/user/forgotpassword/update/:id", auth.forgotPasswordUpdate);
 
-router.get('/api/getallusers',preminum.getAllUsers);
+router.get("/api/userexpenses", authenticate, expenses.fetchUserExpenses);
+router.post("/api/addexpense", authenticate, expenses.postExpenses);
+router.post(
+  "/api/alluser/expenses",
+  authenticate,
+  expenses.fetchSpecificUserExpenses
+);
 
-router.post('/api/payment',authenticate,payment.PostPayment);
-router.post('/api/payment/sucess',authenticate,payment.PostPaymentSuccess);
+router.get("/api/getallusers", preminum.getAllUsers);
+
+router.post("/api/payment", authenticate, payment.PostPayment);
+router.post("/api/payment/sucess", authenticate, payment.PostPaymentSuccess);
 
 module.exports = router;

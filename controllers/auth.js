@@ -208,11 +208,13 @@ exports.forgotPasswordReset = async (req, res) => {
                                     <form action="/auth/user/forgotpassword/update/${req.params.id}" method="post">
                                         <label for="newpassword">Enter New password</label>
                                         <input name="newpassword" type="password" required></input>
+                                        <input type="password" required></input>
                                         <button>reset password</button>
                                     </form>
                           </html>`);
   }
 };
+
 
 exports.forgotPasswordUpdate = async (req, res) => {
   const password = req.body.newpassword;
