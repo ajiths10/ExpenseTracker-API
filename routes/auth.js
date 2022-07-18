@@ -63,6 +63,7 @@ router.post(
   expenses.fetchSpecificUserExpenses
 );
 
+router.post("/api/report/expense",authenticate, isPreminum, preminum.postReport);
 router.get("/api/getallusers", preminum.getAllUsers);
 
 router.post("/api/payment", authenticate, payment.PostPayment);
