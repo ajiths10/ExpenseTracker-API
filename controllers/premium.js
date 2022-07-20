@@ -35,3 +35,12 @@ exports.postReport = async (req, res, next) => {
     res.json({ message: "Internal Server Error", type: 0, response: err });
   }
 };
+
+exports.reportDownload = async(req, res) => {
+  try {
+  
+  }  catch (err) {
+    console.log(err);
+    res.json({ message: "Internal Server Error", type: 0, response: err });
+  }
+  }

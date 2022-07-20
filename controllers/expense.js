@@ -67,3 +67,4 @@ exports.fetchSpecificUserExpenses = async (req, res, next) => {
     res.json({ message: "Internal Server Error", type: 0, response: err });
   }
 };
+
