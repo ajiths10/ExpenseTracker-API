@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const Expenses = require("../models/expenses");
+const ReportDownloaded = require("../models/ReportDownloaded");
 const AWS = require("aws-sdk");
 
 function uploadToS3(data, filename) {
@@ -78,7 +79,10 @@ exports.reportDownload = async (req, res) => {
     const userId = req.user.id;
     const filename = `Expense${userId}/${new Date()}.txt`;
     const fileUrl = await uploadToS3(stringifiedExpenses, filename);
-    console.log("====>", fileUrl);
+    await req.user.createReportDownload({
+      fileURL: fileUrl
+    })
+
     res.json({
       message: "All users fetched",
       response: fileUrl,
