@@ -56,10 +56,14 @@ exports.postReport = async (req, res, next) => {
         userId: req.user.id,
       },
     });
+    const fileUrlList = await ReportDownloaded.findAll({ where:{userId: req.user.id} });
 
     res.json({
       message: "All users fetched",
-      response: ExpensesList,
+      response: {
+        ExpensesList: ExpensesList,
+        ReportFileUrl: fileUrlList,
+      },
       type: 1,
     });
   } catch (err) {
@@ -80,8 +84,8 @@ exports.reportDownload = async (req, res) => {
     const filename = `Expense${userId}/${new Date()}.txt`;
     const fileUrl = await uploadToS3(stringifiedExpenses, filename);
     await req.user.createReportDownload({
-      fileURL: fileUrl
-    })
+      fileURL: fileUrl,
+    });
 
     res.json({
       message: "All users fetched",

@@ -64,7 +64,7 @@ router.post(
   );
   
   router.get("/api/report/download", authenticate,isPreminum, preminum.reportDownload);
-router.post("/api/report/expense",authenticate, isPreminum, preminum.postReport);
+router.post("/api/report/all",authenticate, isPreminum, preminum.postReport);
 router.get("/api/getallusers", preminum.getAllUsers);
 
 router.post("/api/payment", authenticate, payment.PostPayment);
