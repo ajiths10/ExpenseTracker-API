@@ -3,7 +3,7 @@ const Expenses = require("../models/expenses");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
-const ITEMS_PER_Page = 3;
+const ITEMS_PER_Page = 10;
 
 exports.postExpenses = async (req, res, next) => {
   const amount = req.body.amount;
@@ -54,12 +54,12 @@ exports.fetchUserExpenses = async (req, res, next) => {
       response: {
         userExpenses: userExpenses,
         currentPage: page,
-        nextPage: userExpenses.count / 2 > page ? page + 1 : 1,
+        nextPage: userExpenses.count / ITEMS_PER_Page > page ? page + 1 : 0,
         previousPage: page - 1,
       },
       type: 1,
     });
-    
+
   } catch (err) {
     console.log(err);
     res.json({ message: "Internal Server Error", type: 0, response: err });
