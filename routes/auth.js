@@ -55,7 +55,7 @@ router.get("/user/api/verify", authenticate, auth.userVerify);
 router.get("/user/forgotpassword/:id", auth.forgotPasswordReset);
 router.post("/user/forgotpassword/update/:id", auth.forgotPasswordUpdate);
 
-router.get("/api/userexpenses", authenticate, expenses.fetchUserExpenses);
+router.post("/api/userexpenses", authenticate, expenses.fetchUserExpenses);
 router.post("/api/addexpense", authenticate, expenses.postExpenses);
 router.post(
   "/api/alluser/expenses",

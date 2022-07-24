@@ -3,7 +3,6 @@ const Expenses = require("../models/expenses");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
-const ITEMS_PER_Page = 10;
 
 exports.postExpenses = async (req, res, next) => {
   const amount = req.body.amount;
@@ -36,14 +35,10 @@ exports.postExpenses = async (req, res, next) => {
 
 exports.fetchUserExpenses = async (req, res, next) => {
   try {
-    // const userExpenses = await Expenses.findAll({
-    //   where: { userId: req.user.id },
-    // });
-    // console.log(userExpenses);
-
-    const value = req?.query?.page ? req.query.page : 1;
+    const rowsPerPage =  req?.body?.rowsPerPage? req.body.rowsPerPage : 10;
+    const value = req?.body?.page ? req.body.page : 1;
     const page = Number(value);
-    console.log("====>", page);
+    const ITEMS_PER_Page = Number(req.body.rowsPerPage)
     const userExpenses = await Expenses.findAndCountAll({
       offset: (page - 1) * ITEMS_PER_Page,
       limit: ITEMS_PER_Page,
