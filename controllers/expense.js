@@ -39,13 +39,19 @@ exports.fetchUserExpenses = async (req, res, next) => {
     const value = req?.body?.page ? req.body.page : 1;
     const page = Number(value);
     const ITEMS_PER_Page = Number(req.body.rowsPerPage);
-    
-    console.log("===>", AllExpensesUser);
+    const AllExpensesUser = await Expenses.findAll({
+      where: { userId: req.user.id },
+    });
+    let totalAmount = 0;
+    await AllExpensesUser.map((item) => {
+      totalAmount = totalAmount + Number(item.amount);
+    });
+    console.log("===>", totalAmount);
 
     const userExpenses = await Expenses.findAndCountAll({
       offset: (page - 1) * ITEMS_PER_Page,
       limit: ITEMS_PER_Page,
-      where: {userId: req.user.id }
+      where: { userId: req.user.id },
     });
 
     res.json({
@@ -55,6 +61,7 @@ exports.fetchUserExpenses = async (req, res, next) => {
         currentPage: page,
         nextPage: userExpenses.count / ITEMS_PER_Page > page ? page + 1 : 0,
         previousPage: page - 1,
+        TotalAmout: totalAmount
       },
       type: 1,
     });
