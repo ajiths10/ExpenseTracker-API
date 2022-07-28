@@ -61,7 +61,7 @@ exports.fetchUserExpenses = async (req, res, next) => {
         currentPage: page,
         nextPage: userExpenses.count / ITEMS_PER_Page > page ? page + 1 : 0,
         previousPage: page - 1,
-        TotalAmout: totalAmount
+        TotalAmout: totalAmount.toFixed(2),
       },
       type: 1,
     });
