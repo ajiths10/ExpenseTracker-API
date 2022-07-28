@@ -35,14 +35,18 @@ exports.postExpenses = async (req, res, next) => {
 
 exports.fetchUserExpenses = async (req, res, next) => {
   try {
-    const rowsPerPage =  req?.body?.rowsPerPage? req.body.rowsPerPage : 10;
+    const rowsPerPage = req?.body?.rowsPerPage ? req.body.rowsPerPage : 10;
     const value = req?.body?.page ? req.body.page : 1;
     const page = Number(value);
-    const ITEMS_PER_Page = Number(req.body.rowsPerPage)
+    const ITEMS_PER_Page = Number(req.body.rowsPerPage);
+    
+    console.log("===>", AllExpensesUser);
+
     const userExpenses = await Expenses.findAndCountAll({
       offset: (page - 1) * ITEMS_PER_Page,
       limit: ITEMS_PER_Page,
-    })
+      where: {userId: req.user.id }
+    });
 
     res.json({
       message: "Expense fetched",
@@ -54,7 +58,6 @@ exports.fetchUserExpenses = async (req, res, next) => {
       },
       type: 1,
     });
-
   } catch (err) {
     console.log(err);
     res.json({ message: "Internal Server Error", type: 0, response: err });
@@ -63,7 +66,7 @@ exports.fetchUserExpenses = async (req, res, next) => {
 
 exports.fetchSpecificUserExpenses = async (req, res, next) => {
   try {
-    console.log(req.body.id)
+    console.log(req.body.id);
     const userExpenses = await Expenses.findAll({
       where: { userId: req.body.id },
     });
@@ -78,4 +81,3 @@ exports.fetchSpecificUserExpenses = async (req, res, next) => {
     res.json({ message: "Internal Server Error", type: 0, response: err });
   }
 };
-
