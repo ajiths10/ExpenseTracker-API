@@ -1,19 +1,22 @@
 const express = require("express");
+const fs = require("fs");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const helmet = require('helmet');
+const helmet = require("helmet");
+const compression = require("compression");
+const morgan = require("morgan");
 
 const app = express();
 const port = 7777;
-let token ;
+let token;
 
 const sequelize = require("./util/database");
 
 //models
-const User = require('./models/user');
-const Expenses = require('./models/expenses');
-const ForgotPassword = require('./models/ForgotPassword');
-const ReportDownloaded = require('./models/ReportDownloaded');
+const User = require("./models/user");
+const Expenses = require("./models/expenses");
+const ForgotPassword = require("./models/ForgotPassword");
+const ReportDownloaded = require("./models/ReportDownloaded");
 //To generate a token for jwt
 // require('crypto').randomBytes(48, function(err, buffer) {
 //    token = buffer.toString('hex');
@@ -21,14 +24,23 @@ const ReportDownloaded = require('./models/ReportDownloaded');
 // });
 
 //routes
-const auth = require('./routes/auth');
+const auth = require("./routes/auth");
+const path = require("path");
+
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "access.log"),
+  { flags: "a" }
+);
+
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
+app.use(morgan("combined", { stream: accessLogStream }));
+app.use(compression());
 
 console.log("Hello World");
-app.use('/auth', auth)
+app.use("/auth", auth);
 
 Expenses.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 User.hasMany(Expenses);
@@ -38,7 +50,6 @@ User.hasMany(ForgotPassword);
 
 ReportDownloaded.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 User.hasMany(ReportDownloaded);
-
 
 sequelize
   .sync()
