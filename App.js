@@ -59,10 +59,10 @@ sequelize
   .sync()
   .then((e) => {
     // console.log(e);
-    // app.listen(process.env.PORT || port);
-    https
-      .createServer({ key: privateKey, cert: certificate }, app)
-      .listen(process.env.PORT || port);
+    app.listen(process.env.PORT || port);
+    //   https
+    //     .createServer({ key: privateKey, cert: certificate }, app)
+    //     .listen(process.env.PORT || port);
   })
   .then((e) => console.log(`${process.env.PORT || port} - port running`))
   .catch((err) => {
