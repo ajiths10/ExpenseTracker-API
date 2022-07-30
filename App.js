@@ -5,10 +5,14 @@ const cors = require("cors");
 const helmet = require("helmet");
 const compression = require("compression");
 const morgan = require("morgan");
+const https = require("https");
 
 const app = express();
 const port = 7777;
 let token;
+
+const privateKey = fs.readFileSync("server.key");
+const certificate = fs.readFileSync("server.cert");
 
 const sequelize = require("./util/database");
 
@@ -55,9 +59,12 @@ sequelize
   .sync()
   .then((e) => {
     // console.log(e);
-    app.listen(port);
+    // app.listen(process.env.PORT || port);
+    https
+      .createServer({ key: privateKey, cert: certificate }, app)
+      .listen(process.env.PORT || port);
   })
-  .then((e) => console.log(`${port} - port running`))
+  .then((e) => console.log(`${process.env.PORT || port} - port running`))
   .catch((err) => {
     console.log(err);
   });
