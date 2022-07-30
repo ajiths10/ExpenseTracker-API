@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const helmet = require('helmet');
 
 const app = express();
 const port = 7777;
@@ -21,7 +22,7 @@ const ReportDownloaded = require('./models/ReportDownloaded');
 
 //routes
 const auth = require('./routes/auth');
-
+app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
