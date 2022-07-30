@@ -11,8 +11,8 @@ const app = express();
 const port = 7777;
 let token;
 
-const privateKey = fs.readFileSync("server.key");
-const certificate = fs.readFileSync("server.cert");
+// const privateKey = fs.readFileSync("server.key");
+// const certificate = fs.readFileSync("server.cert");
 
 const sequelize = require("./util/database");
 
