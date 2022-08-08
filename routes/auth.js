@@ -57,6 +57,7 @@ router.post("/user/forgotpassword/update/:id", auth.forgotPasswordUpdate);
 
 router.post("/api/userexpenses", authenticate, expenses.fetchUserExpenses);
 router.post("/api/addexpense", authenticate, expenses.postExpenses);
+router.post("/api/deleteexpense", authenticate, expenses.deleteExpense);
 router.post(
   "/api/alluser/expenses",
   authenticate,

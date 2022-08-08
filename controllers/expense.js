@@ -88,3 +88,26 @@ exports.fetchSpecificUserExpenses = async (req, res, next) => {
     res.json({ message: "Internal Server Error", type: 0, response: err });
   }
 };
+
+exports.deleteExpense = async (req, res) => {
+  try {
+    const postId = Number(req.body.expenseId);
+    if (!postId) {
+      res.json({
+        message: "Invalid expense Id",
+        type: 0,
+      });
+    }
+
+    const response = await Expenses.findByPk(postId);
+    await response.destroy();
+
+    res.json({
+      message: "Expense deleted",
+      type: 1,
+    });
+  } catch (err) {
+    console.log(err);
+    res.json({ message: "Internal Server Error", type: 0, response: err });
+  }
+};
